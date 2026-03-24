@@ -38,7 +38,7 @@ function minimax(board: Board, isMaximizing: boolean, depth: number): number {
 function minimaxMove(board: Board): number {
   const moves = getAvailableMoves(board);
   let bestScore = -Infinity;
-  let bestMove = moves[0];
+  let bestMoves: number[] = [];
 
   for (const move of moves) {
     board[move] = CPU;
@@ -46,11 +46,13 @@ function minimaxMove(board: Board): number {
     board[move] = null;
     if (score > bestScore) {
       bestScore = score;
-      bestMove = move;
+      bestMoves = [move];
+    } else if (score === bestScore) {
+      bestMoves.push(move);
     }
   }
 
-  return bestMove;
+  return bestMoves[Math.floor(Math.random() * bestMoves.length)];
 }
 
 function smartMove(board: Board): number {
