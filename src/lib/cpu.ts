@@ -65,12 +65,12 @@ function minimaxMove(board: Board): number {
   return bestMoves[Math.floor(Math.random() * bestMoves.length)];
 }
 
-/** Returns the CPU's chosen move index. Difficulty scales continuously with level 1-10. */
-export function getCpuMove(board: Board, level: number): number {
+/** Difficulty is 0–100. Higher = stronger CPU. */
+export function getCpuMove(board: Board, difficulty: number): number {
   const b = [...board];
-  const mistakeRate = (10 - level) / 9;
+  const mistakeRate = 1 - difficulty / 100;
 
-  if (level >= 4) {
+  if (difficulty >= 35) {
     const win = findWinningMove(b, CPU);
     if (win !== null) return win;
     const block = findWinningMove(b, HUMAN);

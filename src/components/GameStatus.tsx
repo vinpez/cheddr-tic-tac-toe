@@ -1,23 +1,34 @@
 'use client';
 
 import type { GameResult } from '@/lib/game';
+import { getDifficultyLabel } from '@/lib/game';
 
 interface GameStatusProps {
   result: GameResult;
   isPlayerTurn: boolean;
   cpuThinking: boolean;
-  levelDelta: number;
+  isSessionEnd: boolean;
+  difficulty: number;
 }
 
-export function GameStatus({ result, isPlayerTurn, cpuThinking, levelDelta }: GameStatusProps) {
+export function GameStatus({
+  result,
+  isPlayerTurn,
+  cpuThinking,
+  isSessionEnd,
+  difficulty,
+}: GameStatusProps) {
   let message: string;
   let colorClass: string;
 
-  if (result === 'win') {
-    message = levelDelta > 0 ? 'You win — level up!' : 'You win!';
+  if (isSessionEnd) {
+    message = `You reached ${getDifficultyLabel(difficulty)}!`;
+    colorClass = 'text-accent';
+  } else if (result === 'win') {
+    message = 'You win!';
     colorClass = 'text-accent';
   } else if (result === 'loss') {
-    message = levelDelta < 0 ? 'CPU wins — level down.' : 'CPU wins!';
+    message = 'CPU wins!';
     colorClass = 'text-rose-400';
   } else if (result === 'draw') {
     message = "It's a draw!";

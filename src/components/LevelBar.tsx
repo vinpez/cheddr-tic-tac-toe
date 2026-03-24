@@ -1,33 +1,22 @@
 'use client';
 
-import { MAX_LEVEL } from '@/lib/game';
+import { getDifficultyLabel } from '@/lib/game';
 
 interface LevelBarProps {
-  level: number;
-  delta: number;
+  difficulty: number;
 }
 
-export function LevelBar({ level, delta }: LevelBarProps) {
+export function LevelBar({ difficulty }: LevelBarProps) {
   return (
-    <div className="flex items-center gap-3">
-      <span className="text-sm font-semibold text-secondary whitespace-nowrap">
-        Lvl {level}
-        {delta !== 0 && (
-          <span className={`ml-1 ${delta > 0 ? 'text-accent' : 'text-rose-400'}`}>
-            {delta > 0 ? '+1' : '-1'}
-          </span>
-        )}
+    <div className="flex flex-col gap-1.5 flex-1">
+      <span className="text-sm font-semibold text-secondary">
+        {getDifficultyLabel(difficulty)}
       </span>
-      <div className="flex gap-1">
-        {Array.from({ length: MAX_LEVEL }, (_, i) => (
-          <div
-            key={i}
-            className={`
-              h-2.5 w-4 rounded-sm transition-all duration-500
-              ${i < level ? 'bg-accent shadow-[0_0_6px_rgba(205,255,100,0.3)]' : 'bg-border'}
-            `}
-          />
-        ))}
+      <div className="h-2 rounded-full bg-border overflow-hidden">
+        <div
+          className="h-full rounded-full bg-accent transition-all duration-700 shadow-[0_0_8px_rgba(205,255,100,0.3)]"
+          style={{ width: `${Math.round(difficulty)}%` }}
+        />
       </div>
     </div>
   );

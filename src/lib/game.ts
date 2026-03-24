@@ -9,12 +9,28 @@ export interface WinInfo {
 }
 
 export interface PlayerStats {
-  level: number;
+  difficulty: number;
   streak: number;
 }
 
-export const MIN_LEVEL = 1;
-export const MAX_LEVEL = 10;
+export const GAMES_PER_SESSION = 5;
+export const INITIAL_DIFFICULTY = 50;
+
+const DIFFICULTY_LABELS: [number, string][] = [
+  [85, 'Master'],
+  [70, 'Expert'],
+  [55, 'Advanced'],
+  [40, 'Intermediate'],
+  [20, 'Novice'],
+  [0, 'Beginner'],
+];
+
+export function getDifficultyLabel(difficulty: number): string {
+  for (const [threshold, label] of DIFFICULTY_LABELS) {
+    if (difficulty >= threshold) return label;
+  }
+  return 'Beginner';
+}
 
 const WINNING_LINES: readonly number[][] = [
   [0, 1, 2], [3, 4, 5], [6, 7, 8],
