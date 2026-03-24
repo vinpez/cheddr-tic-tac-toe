@@ -1,7 +1,6 @@
 export type Player = 'X' | 'O';
 export type CellValue = Player | null;
 export type Board = CellValue[];
-export type Difficulty = 'easy' | 'medium' | 'hard';
 export type GameResult = 'win' | 'loss' | 'draw' | null;
 
 export interface WinInfo {
@@ -9,11 +8,13 @@ export interface WinInfo {
   line: number[];
 }
 
-export interface Scores {
-  wins: number;
-  losses: number;
-  draws: number;
+export interface PlayerStats {
+  level: number;
+  streak: number;
 }
+
+export const MIN_LEVEL = 1;
+export const MAX_LEVEL = 10;
 
 const WINNING_LINES: readonly number[][] = [
   [0, 1, 2], [3, 4, 5], [6, 7, 8],

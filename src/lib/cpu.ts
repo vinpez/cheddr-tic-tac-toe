@@ -1,4 +1,4 @@
-import type { Board, Difficulty } from './game';
+import type { Board, CellValue } from './game';
 import { checkWinner, getAvailableMoves, isBoardFull } from './game';
 
 const CPU = 'O' as const;
@@ -7,6 +7,16 @@ const HUMAN = 'X' as const;
 function randomMove(board: Board): number {
   const moves = getAvailableMoves(board);
   return moves[Math.floor(Math.random() * moves.length)];
+}
+
+function findWinningMove(board: Board, player: CellValue): number | null {
+  for (const move of getAvailableMoves(board)) {
+    board[move] = player;
+    const wins = !!checkWinner(board);
+    board[move] = null;
+    if (wins) return move;
+  }
+  return null;
 }
 
 function minimax(board: Board, isMaximizing: boolean, depth: number): number {
@@ -55,40 +65,18 @@ function minimaxMove(board: Board): number {
   return bestMoves[Math.floor(Math.random() * bestMoves.length)];
 }
 
-function smartMove(board: Board): number {
-  const moves = getAvailableMoves(board);
-
-  for (const move of moves) {
-    board[move] = CPU;
-    if (checkWinner(board)) {
-      board[move] = null;
-      return move;
-    }
-    board[move] = null;
-  }
-
-  for (const move of moves) {
-    board[move] = HUMAN;
-    if (checkWinner(board)) {
-      board[move] = null;
-      return move;
-    }
-    board[move] = null;
-  }
-
-  if (Math.random() < 0.4) return randomMove(board);
-  return minimaxMove(board);
-}
-
-/** Returns the index of the CPU's chosen move. Creates a working copy to avoid mutating the input. */
-export function getCpuMove(board: Board, difficulty: Difficulty): number {
+/** Returns the CPU's chosen move index. Difficulty scales continuously with level 1-10. */
+export function getCpuMove(board: Board, level: number): number {
   const b = [...board];
-  switch (difficulty) {
-    case 'easy':
-      return randomMove(b);
-    case 'medium':
-      return smartMove(b);
-    case 'hard':
-      return minimaxMove(b);
+  const mistakeRate = (10 - level) / 9;
+
+  if (level >= 4) {
+    const win = findWinningMove(b, CPU);
+    if (win !== null) return win;
+    const block = findWinningMove(b, HUMAN);
+    if (block !== null) return block;
   }
+
+  if (Math.random() < mistakeRate) return randomMove(b);
+  return minimaxMove(b);
 }

@@ -6,17 +6,18 @@ interface GameStatusProps {
   result: GameResult;
   isPlayerTurn: boolean;
   cpuThinking: boolean;
+  levelDelta: number;
 }
 
-export function GameStatus({ result, isPlayerTurn, cpuThinking }: GameStatusProps) {
+export function GameStatus({ result, isPlayerTurn, cpuThinking, levelDelta }: GameStatusProps) {
   let message: string;
   let colorClass: string;
 
   if (result === 'win') {
-    message = 'You win!';
+    message = levelDelta > 0 ? 'You win — level up!' : 'You win!';
     colorClass = 'text-accent';
   } else if (result === 'loss') {
-    message = 'CPU wins!';
+    message = levelDelta < 0 ? 'CPU wins — level down.' : 'CPU wins!';
     colorClass = 'text-rose-400';
   } else if (result === 'draw') {
     message = "It's a draw!";

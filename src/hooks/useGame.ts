@@ -3,36 +3,36 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import {
   type Board,
-  type Difficulty,
   type GameResult,
   type WinInfo,
-  type Scores,
+  type PlayerStats,
   createBoard,
   checkWinner,
   isBoardFull,
+  MIN_LEVEL,
+  MAX_LEVEL,
 } from '@/lib/game';
 import { getCpuMove } from '@/lib/cpu';
 
-const STORAGE_KEY = 'ttt-scores';
-const DEFAULT_SCORES: Scores = { wins: 0, losses: 0, draws: 0 };
+const STORAGE_KEY = 'ttt-stats';
+const DEFAULT_STATS: PlayerStats = { level: 1, streak: 0 };
 
-function loadScores(): Scores {
-  if (typeof window === 'undefined') return DEFAULT_SCORES;
+function loadStats(): PlayerStats {
+  if (typeof window === 'undefined') return DEFAULT_STATS;
   try {
     const data = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '');
     return {
-      wins: Number(data.wins) || 0,
-      losses: Number(data.losses) || 0,
-      draws: Number(data.draws) || 0,
+      level: Math.min(MAX_LEVEL, Math.max(MIN_LEVEL, Number(data.level) || 1)),
+      streak: Math.max(0, Number(data.streak) || 0),
     };
   } catch {
-    return DEFAULT_SCORES;
+    return DEFAULT_STATS;
   }
 }
 
-function saveScores(scores: Scores): void {
+function saveStats(stats: PlayerStats): void {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(scores));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(stats));
   } catch {}
 }
 
@@ -41,23 +41,31 @@ export function useGame() {
   const [isPlayerTurn, setIsPlayerTurn] = useState(true);
   const [result, setResult] = useState<GameResult>(null);
   const [winInfo, setWinInfo] = useState<WinInfo | null>(null);
-  const [difficulty, setDifficulty] = useState<Difficulty>('medium');
-  const [scores, setScores] = useState<Scores>(DEFAULT_SCORES);
   const [cpuThinking, setCpuThinking] = useState(false);
+  const [stats, setStats] = useState<PlayerStats>(DEFAULT_STATS);
+  const [levelDelta, setLevelDelta] = useState(0);
   const cpuTimeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   useEffect(() => {
-    setScores(loadScores());
+    setStats(loadStats());
   }, []);
 
-  const addScore = useCallback((r: 'win' | 'loss' | 'draw') => {
-    setScores(prev => {
-      const next: Scores = {
-        wins: prev.wins + (r === 'win' ? 1 : 0),
-        losses: prev.losses + (r === 'loss' ? 1 : 0),
-        draws: prev.draws + (r === 'draw' ? 1 : 0),
-      };
-      saveScores(next);
+  const applyResult = useCallback((r: 'win' | 'loss' | 'draw') => {
+    setStats(prev => {
+      let nextLevel = prev.level;
+      let nextStreak = prev.streak;
+
+      if (r === 'win') {
+        nextLevel = Math.min(MAX_LEVEL, prev.level + 1);
+        nextStreak = prev.streak + 1;
+      } else if (r === 'loss') {
+        nextLevel = Math.max(MIN_LEVEL, prev.level - 1);
+        nextStreak = 0;
+      }
+
+      setLevelDelta(nextLevel - prev.level);
+      const next = { level: nextLevel, streak: nextStreak };
+      saveStats(next);
       return next;
     });
   }, []);
@@ -68,7 +76,7 @@ export function useGame() {
       const delay = 300 + Math.random() * 300;
 
       cpuTimeoutRef.current = setTimeout(() => {
-        const move = getCpuMove(currentBoard, difficulty);
+        const move = getCpuMove(currentBoard, stats.level);
         const nextBoard = [...currentBoard];
         nextBoard[move] = 'O';
         setBoard(nextBoard);
@@ -78,16 +86,16 @@ export function useGame() {
         if (winner) {
           setWinInfo(winner);
           setResult('loss');
-          addScore('loss');
+          applyResult('loss');
         } else if (isBoardFull(nextBoard)) {
           setResult('draw');
-          addScore('draw');
+          applyResult('draw');
         } else {
           setIsPlayerTurn(true);
         }
       }, delay);
     },
-    [difficulty, addScore],
+    [stats.level, applyResult],
   );
 
   const makeMove = useCallback(
@@ -102,38 +110,31 @@ export function useGame() {
       if (winner) {
         setWinInfo(winner);
         setResult('win');
-        addScore('win');
+        applyResult('win');
         return;
       }
 
       if (isBoardFull(nextBoard)) {
         setResult('draw');
-        addScore('draw');
+        applyResult('draw');
         return;
       }
 
       setIsPlayerTurn(false);
       handleCpuMove(nextBoard);
     },
-    [board, isPlayerTurn, result, cpuThinking, handleCpuMove, addScore],
+    [board, isPlayerTurn, result, cpuThinking, handleCpuMove, applyResult],
   );
 
-  const resetGame = useCallback(() => {
+  const newGame = useCallback(() => {
     if (cpuTimeoutRef.current) clearTimeout(cpuTimeoutRef.current);
     setBoard(createBoard());
     setIsPlayerTurn(true);
     setResult(null);
     setWinInfo(null);
     setCpuThinking(false);
+    setLevelDelta(0);
   }, []);
-
-  const changeDifficulty = useCallback(
-    (d: Difficulty) => {
-      setDifficulty(d);
-      resetGame();
-    },
-    [resetGame],
-  );
 
   useEffect(() => {
     return () => {
@@ -146,11 +147,11 @@ export function useGame() {
     isPlayerTurn,
     result,
     winInfo,
-    difficulty,
-    scores,
     cpuThinking,
+    level: stats.level,
+    streak: stats.streak,
+    levelDelta,
     makeMove,
-    resetGame,
-    changeDifficulty,
+    newGame,
   };
 }
