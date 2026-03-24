@@ -1,0 +1,33 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-background: #0B0B0F;
+  --color-foreground: #FFFFFF;
+  --color-surface: #161620;
+  --color-border: #2A2A38;
+  --color-accent: #CDFF64;
+  --color-accent-hover: #B8E855;
+  --color-secondary: #8A8A9A;
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --animate-pop: pop 200ms ease-out forwards;
+}
+
+@keyframes pop {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.15);
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+}
