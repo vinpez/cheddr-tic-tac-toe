@@ -1,6 +1,7 @@
 'use client';
 
 import { getDifficultyLabel } from '@/lib/game';
+import styles from './LevelBar.module.scss';
 
 interface LevelBarProps {
   difficulty: number;
@@ -8,13 +9,11 @@ interface LevelBarProps {
 
 export function LevelBar({ difficulty }: LevelBarProps) {
   return (
-    <div className="flex flex-col gap-1.5 flex-1">
-      <span className="text-xs font-bold uppercase tracking-wider text-secondary">
-        {getDifficultyLabel(difficulty)}
-      </span>
-      <div className="h-2 rounded-full bg-border overflow-hidden">
+    <div className={styles.LevelBar}>
+      <span className={styles.label}>{getDifficultyLabel(difficulty)}</span>
+      <div className={styles.track}>
         <div
-          className="h-full rounded-full bg-accent transition-all duration-700 shadow-[0_0_10px_rgba(255,225,53,0.4)]"
+          className={styles.fill}
           style={{ width: `${Math.round(difficulty)}%` }}
         />
       </div>

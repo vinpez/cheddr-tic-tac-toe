@@ -1,0 +1,49 @@
+.main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.game {
+  width: 100%;
+  max-width: 24rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+
+  .header {
+    text-align: center;
+  }
+
+  .title {
+    font-size: 1.875rem;
+    font-weight: 900;
+    font-style: italic;
+    text-transform: uppercase;
+    letter-spacing: -0.025em;
+    color: var(--color-accent);
+  }
+
+  .subtitle {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: 0.5rem;
+    color: var(--color-secondary);
+  }
+
+  .levelBarWrapper {
+    width: 100%;
+  }
+
+  .buttonSlot {
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}

@@ -2,6 +2,7 @@
 
 import type { GameResult } from '@/lib/game';
 import { getDifficultyLabel } from '@/lib/game';
+import styles from './GameStatus.module.scss';
 
 interface GameStatusProps {
   result: GameResult;
@@ -19,33 +20,33 @@ export function GameStatus({
   difficulty,
 }: GameStatusProps) {
   let message: string;
-  let colorClass: string;
+  let variant: string;
 
   if (isSessionEnd) {
     message = `You reached ${getDifficultyLabel(difficulty)}!`;
-    colorClass = 'text-accent';
+    variant = styles.win;
   } else if (result === 'win') {
     message = 'You win!';
-    colorClass = 'text-accent';
+    variant = styles.win;
   } else if (result === 'loss') {
     message = 'CPU wins!';
-    colorClass = 'text-rose-400';
+    variant = styles.loss;
   } else if (result === 'draw') {
     message = "It's a draw!";
-    colorClass = 'text-amber-400';
+    variant = styles.draw;
   } else if (cpuThinking) {
     message = 'CPU thinking\u2026';
-    colorClass = 'text-secondary animate-pulse';
+    variant = styles.thinking;
   } else if (isPlayerTurn) {
     message = 'Your turn';
-    colorClass = 'text-foreground';
+    variant = styles.turn;
   } else {
     message = '';
-    colorClass = 'text-secondary';
+    variant = styles.idle;
   }
 
   return (
-    <div className={`text-center text-lg font-bold uppercase tracking-wide h-7 ${colorClass}`}>
+    <div className={`${styles.GameStatus} ${variant}`}>
       {message}
     </div>
   );

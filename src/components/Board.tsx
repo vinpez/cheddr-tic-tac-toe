@@ -2,6 +2,7 @@
 
 import type { Board as BoardType, WinInfo } from '@/lib/game';
 import { Cell } from './Cell';
+import styles from './Board.module.scss';
 
 interface BoardProps {
   board: BoardType;
@@ -14,7 +15,7 @@ export function Board({ board, winInfo, onCellClick, disabled }: BoardProps) {
   const winningCells = new Set(winInfo?.line);
 
   return (
-    <div className="grid grid-cols-3 gap-3 w-full max-w-[320px] mx-auto">
+    <div className={styles.Board}>
       {board.map((cell, i) => (
         <Cell
           key={i}

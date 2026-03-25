@@ -1,0 +1,33 @@
+.GameStatus {
+  text-align: center;
+  font-size: 1.125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  height: 1.75rem;
+
+  &.win {
+    color: var(--color-accent);
+  }
+
+  &.loss {
+    color: var(--color-loss);
+  }
+
+  &.draw {
+    color: var(--color-draw);
+  }
+
+  &.thinking {
+    color: var(--color-secondary);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  &.turn {
+    color: var(--color-foreground);
+  }
+
+  &.idle {
+    color: var(--color-secondary);
+  }
+}
