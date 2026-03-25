@@ -17,9 +17,9 @@ export function IntroScreen({ bestDifficulty, onStart }: IntroScreenProps) {
       <div className={styles.description}>
         <p>Play {GAMES_PER_SESSION} games against the CPU.</p>
         <p>
-          Win to <span className={styles.accentText}>increase</span> the
+          Win to <span className={styles.primaryText}>increase</span> the
           difficulty. Lose to{' '}
-          <span className={styles.lossText}>decrease</span> it.
+          <span className={styles.secondaryText}>decrease</span> it.
         </p>
         <p className={styles.highlight}>How high can you climb?</p>
       </div>

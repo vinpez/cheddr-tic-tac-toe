@@ -13,7 +13,7 @@
     font-style: italic;
     text-transform: uppercase;
     letter-spacing: -0.025em;
-    color: var(--color-accent);
+    color: var(--color-primary);
   }
 
   .result {
@@ -27,7 +27,7 @@
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.1em;
-      color: var(--color-secondary);
+      color: var(--color-text-muted);
     }
 
     .levelLabel {
@@ -35,7 +35,7 @@
       font-weight: 900;
       text-transform: uppercase;
       letter-spacing: -0.025em;
-      color: var(--color-accent);
+      color: var(--color-primary);
     }
 
     .levelBarWrapper {
@@ -47,15 +47,15 @@
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      color: var(--color-accent);
+      color: var(--color-primary);
     }
 
     .bestScore {
-      color: var(--color-secondary);
+      color: var(--color-text-muted);
       font-size: 0.875rem;
 
       .bestValue {
-        color: var(--color-accent);
+        color: var(--color-primary);
         font-weight: 700;
       }
     }

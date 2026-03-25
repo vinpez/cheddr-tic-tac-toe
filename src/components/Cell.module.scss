@@ -23,17 +23,17 @@
   }
 
   &.winning {
-    border-color: var(--color-accent);
+    border-color: var(--color-primary);
     background: rgba(239, 244, 103, 0.1);
     box-shadow: 0 0 24px rgba(239, 244, 103, 0.2);
   }
 
   &.x {
-    color: var(--color-accent);
+    color: var(--color-primary);
   }
 
   &.o {
-    color: var(--color-loss);
+    color: var(--color-secondary);
   }
 
   .mark {

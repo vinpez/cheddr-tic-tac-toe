@@ -24,7 +24,7 @@
     font-style: italic;
     text-transform: uppercase;
     letter-spacing: -0.025em;
-    color: var(--color-accent);
+    color: var(--color-primary);
   }
 
   .subtitle {
@@ -33,7 +33,7 @@
     text-transform: uppercase;
     letter-spacing: 0.1em;
     margin-top: 0.5rem;
-    color: var(--color-secondary);
+    color: var(--color-text-muted);
   }
 
   .levelBarWrapper {

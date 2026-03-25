@@ -7,11 +7,11 @@
   height: 1.75rem;
 
   &.win {
-    color: var(--color-accent);
+    color: var(--color-primary);
   }
 
   &.loss {
-    color: var(--color-loss);
+    color: var(--color-secondary);
   }
 
   &.draw {
@@ -19,7 +19,7 @@
   }
 
   &.thinking {
-    color: var(--color-secondary);
+    color: var(--color-text-muted);
     animation: pulse 2s ease-in-out infinite;
   }
 
@@ -28,6 +28,6 @@
   }
 
   &.idle {
-    color: var(--color-secondary);
+    color: var(--color-text-muted);
   }
 }
