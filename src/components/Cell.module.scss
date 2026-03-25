@@ -17,15 +17,15 @@
     cursor: pointer;
 
     &:hover {
-      border-color: rgba(255, 225, 53, 0.4);
+      border-color: rgba(239, 244, 103, 0.4);
       background: rgba(255, 255, 255, 0.03);
     }
   }
 
   &.winning {
     border-color: var(--color-accent);
-    background: rgba(255, 225, 53, 0.1);
-    box-shadow: 0 0 24px rgba(255, 225, 53, 0.2);
+    background: rgba(239, 244, 103, 0.1);
+    box-shadow: 0 0 24px rgba(239, 244, 103, 0.2);
   }
 
   &.x {
