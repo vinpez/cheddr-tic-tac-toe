@@ -5,6 +5,7 @@ import { useGame } from '@/hooks/useGame';
 import { Board } from '@/components/Board';
 import { GameStatus } from '@/components/GameStatus';
 import { LevelBar } from '@/components/LevelBar';
+import { Button } from '@/components/Button';
 import { GAMES_PER_SESSION, getDifficultyLabel } from '@/lib/game';
 
 function IntroScreen({
@@ -41,12 +42,9 @@ function IntroScreen({
         </p>
       )}
 
-      <button
-        onClick={onStart}
-        className="px-10 py-3.5 rounded-full font-bold text-lg uppercase tracking-wide transition-all duration-200 cursor-pointer bg-accent text-black hover:bg-accent-hover"
-      >
+      <Button onClick={onStart} size="large">
         Start
-      </button>
+      </Button>
     </div>
   );
 }
@@ -94,12 +92,9 @@ function SessionEndScreen({
         )}
       </div>
 
-      <button
-        onClick={onPlayAgain}
-        className="px-10 py-3.5 rounded-full font-bold text-lg uppercase tracking-wide transition-all duration-200 cursor-pointer bg-accent text-black hover:bg-accent-hover"
-      >
+      <Button onClick={onPlayAgain} size="large">
         Play Again
-      </button>
+      </Button>
     </div>
   );
 }
@@ -145,6 +140,8 @@ export default function Home() {
     );
   }
 
+  const showNextButton = result && currentGame < GAMES_PER_SESSION;
+
   return (
     <main className="flex-1 flex items-center justify-center p-4">
       <div className="w-full max-w-sm flex flex-col items-center gap-8">
@@ -176,14 +173,11 @@ export default function Home() {
           difficulty={difficulty}
         />
 
-        {result && currentGame < GAMES_PER_SESSION && (
-          <button
-            onClick={nextGame}
-            className="px-8 py-3 rounded-full font-bold uppercase tracking-wide transition-all duration-200 cursor-pointer bg-accent text-black hover:bg-accent-hover"
-          >
-            Next Game
-          </button>
-        )}
+        <div className="h-12 flex items-center justify-center">
+          {showNextButton && (
+            <Button onClick={nextGame}>Next Game</Button>
+          )}
+        </div>
       </div>
     </main>
   );
