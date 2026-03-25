@@ -1,0 +1,52 @@
+.IntroScreen {
+  width: 100%;
+  max-width: 24rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3rem;
+  text-align: center;
+
+  .title {
+    font-size: 3rem;
+    font-weight: 900;
+    font-style: italic;
+    text-transform: uppercase;
+    letter-spacing: -0.025em;
+    color: var(--color-primary);
+  }
+
+  .description {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    color: var(--color-text-muted);
+    font-size: 0.875rem;
+    line-height: 1.625;
+
+    .primaryText {
+      color: var(--color-primary);
+      font-weight: 600;
+    }
+
+    .secondaryText {
+      color: var(--color-secondary);
+      font-weight: 600;
+    }
+
+    .highlight {
+      color: var(--color-foreground);
+      font-weight: 600;
+    }
+  }
+
+  .bestScore {
+    color: var(--color-text-muted);
+    font-size: 0.875rem;
+
+    .bestValue {
+      color: var(--color-primary);
+      font-weight: 700;
+    }
+  }
+}

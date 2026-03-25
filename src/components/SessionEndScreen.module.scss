@@ -1,0 +1,63 @@
+.SessionEndScreen {
+  width: 100%;
+  max-width: 24rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2.5rem;
+  text-align: center;
+
+  .title {
+    font-size: 3rem;
+    font-weight: 900;
+    font-style: italic;
+    text-transform: uppercase;
+    letter-spacing: -0.025em;
+    color: var(--color-primary);
+  }
+
+  .result {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+
+    .reachedLabel {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--color-text-muted);
+    }
+
+    .levelLabel {
+      font-size: 2.25rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: -0.025em;
+      color: var(--color-primary);
+    }
+
+    .levelBarWrapper {
+      width: 100%;
+    }
+
+    .newBest {
+      font-size: 0.875rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--color-primary);
+    }
+
+    .bestScore {
+      color: var(--color-text-muted);
+      font-size: 0.875rem;
+
+      .bestValue {
+        color: var(--color-primary);
+        font-weight: 700;
+      }
+    }
+  }
+}
