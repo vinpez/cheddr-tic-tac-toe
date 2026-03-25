@@ -176,7 +176,7 @@ export default function Home() {
           difficulty={difficulty}
         />
 
-        {result && (
+        {result && currentGame < GAMES_PER_SESSION && (
           <button
             onClick={nextGame}
             className="px-8 py-3 rounded-full font-bold uppercase tracking-wide transition-all duration-200 cursor-pointer bg-accent text-black hover:bg-accent-hover"

@@ -44,23 +44,30 @@ export function useGame() {
   const [difficulty, setDifficulty] = useState(INITIAL_DIFFICULTY);
   const [stats, setStats] = useState<PlayerStats>(DEFAULT_STATS);
   const [currentGame, setCurrentGame] = useState(1);
+  const [showSessionEnd, setShowSessionEnd] = useState(false);
   const cpuTimeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const sessionEndTimeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   useEffect(() => {
     setStats(loadStats());
   }, []);
 
-  const isSessionEnd = result !== null && currentGame >= GAMES_PER_SESSION;
+  const isLastGame = result !== null && currentGame >= GAMES_PER_SESSION;
 
   useEffect(() => {
-    if (isSessionEnd && difficulty > stats.bestDifficulty) {
-      setStats(prev => {
-        const next = { bestDifficulty: difficulty };
-        saveStats(next);
-        return next;
-      });
+    if (isLastGame) {
+      if (difficulty > stats.bestDifficulty) {
+        setStats(() => {
+          const next = { bestDifficulty: difficulty };
+          saveStats(next);
+          return next;
+        });
+      }
+      sessionEndTimeoutRef.current = setTimeout(() => {
+        setShowSessionEnd(true);
+      }, 2000);
     }
-  }, [isSessionEnd, difficulty, stats.bestDifficulty]);
+  }, [isLastGame, difficulty, stats.bestDifficulty]);
 
   const applyResult = useCallback((r: 'win' | 'loss' | 'draw') => {
     setDifficulty(prev => {
@@ -141,14 +148,17 @@ export function useGame() {
   }, [resetBoard]);
 
   const newSession = useCallback(() => {
+    if (sessionEndTimeoutRef.current) clearTimeout(sessionEndTimeoutRef.current);
     resetBoard();
     setCurrentGame(1);
     setDifficulty(INITIAL_DIFFICULTY);
+    setShowSessionEnd(false);
   }, [resetBoard]);
 
   useEffect(() => {
     return () => {
       if (cpuTimeoutRef.current) clearTimeout(cpuTimeoutRef.current);
+      if (sessionEndTimeoutRef.current) clearTimeout(sessionEndTimeoutRef.current);
     };
   }, []);
 
@@ -161,7 +171,7 @@ export function useGame() {
     difficulty,
     bestDifficulty: stats.bestDifficulty,
     currentGame,
-    isSessionEnd,
+    isSessionEnd: showSessionEnd,
     makeMove,
     nextGame,
     newSession,
