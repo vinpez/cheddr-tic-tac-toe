@@ -36,6 +36,14 @@ body {
   font-family: var(--font-sans);
 }
 
+button {
+  font: inherit;
+  color: inherit;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
 @keyframes pop {
   from {
     transform: scale(0);
