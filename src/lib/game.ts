@@ -10,7 +10,6 @@ export interface WinInfo {
 
 export interface PlayerStats {
   bestDifficulty: number;
-  streak: number;
 }
 
 export const GAMES_PER_SESSION = 5;

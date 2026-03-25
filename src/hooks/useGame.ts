@@ -15,7 +15,7 @@ import {
 import { getCpuMove } from '@/lib/cpu';
 
 const STORAGE_KEY = 'ttt-stats';
-const DEFAULT_STATS: PlayerStats = { bestDifficulty: 0, streak: 0 };
+const DEFAULT_STATS: PlayerStats = { bestDifficulty: 0 };
 
 function loadStats(): PlayerStats {
   if (typeof window === 'undefined') return DEFAULT_STATS;
@@ -23,7 +23,6 @@ function loadStats(): PlayerStats {
     const data = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '');
     return {
       bestDifficulty: Math.min(100, Math.max(0, Number(data.bestDifficulty) || 0)),
-      streak: Math.max(0, Number(data.streak) || 0),
     };
   } catch {
     return DEFAULT_STATS;
@@ -56,7 +55,7 @@ export function useGame() {
   useEffect(() => {
     if (isSessionEnd && difficulty > stats.bestDifficulty) {
       setStats(prev => {
-        const next = { ...prev, bestDifficulty: difficulty };
+        const next = { bestDifficulty: difficulty };
         saveStats(next);
         return next;
       });
@@ -69,14 +68,6 @@ export function useGame() {
       if (r === 'loss') return prev - Math.min(25, prev / 2);
       return prev;
     });
-
-    if (r !== 'draw') {
-      setStats(prev => {
-        const next = { ...prev, streak: r === 'win' ? prev.streak + 1 : 0 };
-        saveStats(next);
-        return next;
-      });
-    }
   }, []);
 
   const handleCpuMove = useCallback(
@@ -169,7 +160,6 @@ export function useGame() {
     cpuThinking,
     difficulty,
     bestDifficulty: stats.bestDifficulty,
-    streak: stats.streak,
     currentGame,
     isSessionEnd,
     makeMove,

@@ -5,7 +5,6 @@ import { useGame } from '@/hooks/useGame';
 import { Board } from '@/components/Board';
 import { GameStatus } from '@/components/GameStatus';
 import { LevelBar } from '@/components/LevelBar';
-import { StreakBadge } from '@/components/StreakBadge';
 import { GAMES_PER_SESSION, getDifficultyLabel } from '@/lib/game';
 
 function IntroScreen({
@@ -56,13 +55,11 @@ function SessionEndScreen({
   difficulty,
   bestDifficulty,
   isNewBest,
-  streak,
   onPlayAgain,
 }: {
   difficulty: number;
   bestDifficulty: number;
   isNewBest: boolean;
-  streak: number;
   onPlayAgain: () => void;
 }) {
   return (
@@ -97,8 +94,6 @@ function SessionEndScreen({
         )}
       </div>
 
-      <StreakBadge streak={streak} />
-
       <button
         onClick={onPlayAgain}
         className="px-10 py-3.5 rounded-full font-bold text-lg uppercase tracking-wide transition-all duration-200 cursor-pointer bg-accent text-black hover:bg-accent-hover"
@@ -119,7 +114,6 @@ export default function Home() {
     cpuThinking,
     difficulty,
     bestDifficulty,
-    streak,
     currentGame,
     isSessionEnd,
     makeMove,
@@ -145,7 +139,6 @@ export default function Home() {
           difficulty={difficulty}
           bestDifficulty={bestDifficulty}
           isNewBest={difficulty >= bestDifficulty}
-          streak={streak}
           onPlayAgain={() => newSession()}
         />
       </main>
@@ -164,9 +157,8 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="flex items-center gap-4 w-full">
+        <div className="w-full">
           <LevelBar difficulty={difficulty} />
-          <StreakBadge streak={streak} />
         </div>
 
         <Board
