@@ -4,11 +4,6 @@ import { checkWinner, getAvailableMoves, isBoardFull } from './game';
 const CPU = 'O' as const;
 const HUMAN = 'X' as const;
 
-function randomMove(board: Board): number {
-  const moves = getAvailableMoves(board);
-  return moves[Math.floor(Math.random() * moves.length)];
-}
-
 function findWinningMove(board: Board, player: CellValue): number | null {
   for (const move of getAvailableMoves(board)) {
     board[move] = player;
@@ -45,30 +40,27 @@ function minimax(board: Board, isMaximizing: boolean, depth: number): number {
   return best;
 }
 
-function minimaxMove(board: Board): number {
+function scoredMove(board: Board, difficulty: number): number {
   const moves = getAvailableMoves(board);
-  let bestScore = -Infinity;
-  let bestMoves: number[] = [];
-
-  for (const move of moves) {
+  const scored = moves.map(move => {
     board[move] = CPU;
     const score = minimax(board, false, 0);
     board[move] = null;
-    if (score > bestScore) {
-      bestScore = score;
-      bestMoves = [move];
-    } else if (score === bestScore) {
-      bestMoves.push(move);
-    }
-  }
+    return { move, score };
+  });
 
-  return bestMoves[Math.floor(Math.random() * bestMoves.length)];
+  scored.sort((a, b) => a.score - b.score);
+
+  const target = (difficulty / 100) * (scored.length - 1);
+  const offset = (Math.random() * 0.2 - 0.1) * scored.length;
+  const index = Math.round(Math.min(scored.length - 1, Math.max(0, target + offset)));
+
+  return scored[index].move;
 }
 
 /** Difficulty is 0–100. Higher = stronger CPU. */
 export function getCpuMove(board: Board, difficulty: number): number {
   const b = [...board];
-  const mistakeRate = 1 - difficulty / 100;
 
   if (difficulty >= 35) {
     const win = findWinningMove(b, CPU);
@@ -77,6 +69,5 @@ export function getCpuMove(board: Board, difficulty: number): number {
     if (block !== null) return block;
   }
 
-  if (Math.random() < mistakeRate) return randomMove(b);
-  return minimaxMove(b);
+  return scoredMove(b, difficulty);
 }
