@@ -79,8 +79,6 @@ export default function Home() {
           result={result}
           isPlayerTurn={isPlayerTurn}
           cpuThinking={cpuThinking}
-          isSessionEnd={false}
-          difficulty={difficulty}
         />
 
         <div className={styles.buttonSlot}>

@@ -35,6 +35,12 @@ function saveStats(stats: PlayerStats): void {
   } catch {}
 }
 
+function computeNextDifficulty(prev: number, r: 'win' | 'loss' | 'draw'): number {
+  if (r === 'win') return prev + Math.min(25, (100 - prev) / 2);
+  if (r === 'loss') return prev - Math.min(25, prev / 2);
+  return prev;
+}
+
 export function useGame() {
   const [board, setBoard] = useState<Board>(createBoard);
   const [isPlayerTurn, setIsPlayerTurn] = useState(true);
@@ -45,6 +51,7 @@ export function useGame() {
   const [stats, setStats] = useState<PlayerStats>(DEFAULT_STATS);
   const [currentGame, setCurrentGame] = useState(1);
   const [showSessionEnd, setShowSessionEnd] = useState(false);
+  const difficultyRef = useRef(INITIAL_DIFFICULTY);
   const cpuTimeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
   const sessionEndTimeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
@@ -52,27 +59,23 @@ export function useGame() {
   useEffect(() => { setStats(loadStats()); }, []);
 
   const applyResult = useCallback((r: 'win' | 'loss' | 'draw', isLast: boolean) => {
-    setDifficulty(prev => {
-      let next = prev;
-      if (r === 'win') next = prev + Math.min(25, (100 - prev) / 2);
-      if (r === 'loss') next = prev - Math.min(25, prev / 2);
+    const next = computeNextDifficulty(difficultyRef.current, r);
+    difficultyRef.current = next;
+    setDifficulty(next);
 
-      if (isLast) {
-        setStats(current => {
-          if (next > current.bestDifficulty) {
-            const updated = { bestDifficulty: next };
-            saveStats(updated);
-            return updated;
-          }
-          return current;
-        });
-        sessionEndTimeoutRef.current = setTimeout(() => {
-          setShowSessionEnd(true);
-        }, 2000);
-      }
-
-      return next;
-    });
+    if (isLast) {
+      setStats(current => {
+        if (next > current.bestDifficulty) {
+          const updated = { bestDifficulty: next };
+          saveStats(updated);
+          return updated;
+        }
+        return current;
+      });
+      sessionEndTimeoutRef.current = setTimeout(() => {
+        setShowSessionEnd(true);
+      }, 2000);
+    }
   }, []);
 
   const handleCpuMove = useCallback(
@@ -81,7 +84,7 @@ export function useGame() {
       const delay = 300 + Math.random() * 300;
 
       cpuTimeoutRef.current = setTimeout(() => {
-        const move = getCpuMove(currentBoard, difficulty);
+        const move = getCpuMove(currentBoard, difficultyRef.current);
         const nextBoard = [...currentBoard];
         nextBoard[move] = 'O';
         setBoard(nextBoard);
@@ -100,7 +103,7 @@ export function useGame() {
         }
       }, delay);
     },
-    [difficulty, applyResult],
+    [applyResult],
   );
 
   const makeMove = useCallback(
@@ -150,6 +153,7 @@ export function useGame() {
     if (sessionEndTimeoutRef.current) clearTimeout(sessionEndTimeoutRef.current);
     resetBoard();
     setCurrentGame(1);
+    difficultyRef.current = INITIAL_DIFFICULTY;
     setDifficulty(INITIAL_DIFFICULTY);
     setShowSessionEnd(false);
   }, [resetBoard]);

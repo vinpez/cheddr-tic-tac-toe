@@ -8,9 +8,16 @@ interface CellProps {
   onClick: () => void;
   disabled: boolean;
   isWinning: boolean;
+  position: number;
 }
 
-export function Cell({ value, onClick, disabled, isWinning }: CellProps) {
+const POSITION_LABELS = [
+  'top-left', 'top-center', 'top-right',
+  'middle-left', 'center', 'middle-right',
+  'bottom-left', 'bottom-center', 'bottom-right',
+];
+
+export function Cell({ value, onClick, disabled, isWinning, position }: CellProps) {
   const interactive = !value && !disabled;
 
   const className = [
@@ -21,8 +28,17 @@ export function Cell({ value, onClick, disabled, isWinning }: CellProps) {
     value === 'O' ? styles.o : '',
   ].filter(Boolean).join(' ');
 
+  const label = value
+    ? `${POSITION_LABELS[position]}, ${value}`
+    : `${POSITION_LABELS[position]}, empty`;
+
   return (
-    <button onClick={onClick} disabled={!interactive} className={className}>
+    <button
+      onClick={onClick}
+      disabled={!interactive}
+      className={className}
+      aria-label={label}
+    >
       {value && (
         <span className={isWinning ? styles.markPulse : styles.mark}>
           {value}

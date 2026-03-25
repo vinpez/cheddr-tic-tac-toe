@@ -13,6 +13,9 @@
   --color-border: #1f1f2b;
   --color-primary: #eff467;
   --color-primary-hover: #d7dc5d;
+  --color-primary-glow-40: rgba(239, 244, 103, 0.4);
+  --color-primary-glow-20: rgba(239, 244, 103, 0.2);
+  --color-primary-glow-10: rgba(239, 244, 103, 0.1);
   --color-secondary: #dc00ff;
   --color-text-muted: #6b6b7b;
   --color-draw: #fbbf24;
@@ -68,14 +71,3 @@ button {
   }
 }
 
-@keyframes level-up {
-  0% {
-    filter: brightness(1);
-  }
-  50% {
-    filter: brightness(1.6);
-  }
-  100% {
-    filter: brightness(1);
-  }
-}

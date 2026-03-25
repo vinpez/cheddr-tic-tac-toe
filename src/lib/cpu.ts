@@ -11,10 +11,9 @@ function randomMove(board: Board): number {
 
 function findWinningMove(board: Board, player: CellValue): number | null {
   for (const move of getAvailableMoves(board)) {
-    board[move] = player;
-    const wins = !!checkWinner(board);
-    board[move] = null;
-    if (wins) return move;
+    const next = [...board];
+    next[move] = player;
+    if (checkWinner(next)) return move;
   }
   return null;
 }
@@ -29,18 +28,18 @@ function minimax(board: Board, isMaximizing: boolean, depth: number): number {
   if (isMaximizing) {
     let best = -Infinity;
     for (const move of moves) {
-      board[move] = CPU;
-      best = Math.max(best, minimax(board, false, depth + 1));
-      board[move] = null;
+      const next = [...board];
+      next[move] = CPU;
+      best = Math.max(best, minimax(next, false, depth + 1));
     }
     return best;
   }
 
   let best = Infinity;
   for (const move of moves) {
-    board[move] = HUMAN;
-    best = Math.min(best, minimax(board, true, depth + 1));
-    board[move] = null;
+    const next = [...board];
+    next[move] = HUMAN;
+    best = Math.min(best, minimax(next, true, depth + 1));
   }
   return best;
 }
@@ -51,9 +50,9 @@ function minimaxMove(board: Board): number {
   let bestMoves: number[] = [];
 
   for (const move of moves) {
-    board[move] = CPU;
-    const score = minimax(board, false, 0);
-    board[move] = null;
+    const next = [...board];
+    next[move] = CPU;
+    const score = minimax(next, false, 0);
     if (score > bestScore) {
       bestScore = score;
       bestMoves = [move];
@@ -67,16 +66,15 @@ function minimaxMove(board: Board): number {
 
 /** Difficulty is 0–100. Higher = stronger CPU. */
 export function getCpuMove(board: Board, difficulty: number): number {
-  const b = [...board];
   const mistakeRate = 1 - difficulty / 100;
 
   if (difficulty >= 35) {
-    const win = findWinningMove(b, CPU);
+    const win = findWinningMove(board, CPU);
     if (win !== null) return win;
-    const block = findWinningMove(b, HUMAN);
+    const block = findWinningMove(board, HUMAN);
     if (block !== null) return block;
   }
 
-  if (Math.random() < mistakeRate) return randomMove(b);
-  return minimaxMove(b);
+  if (Math.random() < mistakeRate) return randomMove(board);
+  return minimaxMove(board);
 }

@@ -23,6 +23,7 @@ export function Board({ board, winInfo, onCellClick, disabled }: BoardProps) {
           onClick={() => onCellClick(i)}
           disabled={disabled}
           isWinning={winningCells.has(i)}
+          position={i}
         />
       ))}
     </div>

@@ -24,6 +24,6 @@
     border-radius: 9999px;
     background: var(--color-primary);
     transition: all 700ms;
-    box-shadow: 0 0 10px rgba(239, 244, 103, 0.4);
+    box-shadow: 0 0 10px var(--color-primary-glow-40);
   }
 }
