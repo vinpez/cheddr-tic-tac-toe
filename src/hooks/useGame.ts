@@ -48,37 +48,35 @@ export function useGame() {
   const cpuTimeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
   const sessionEndTimeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
-  useEffect(() => {
-    setStats(loadStats());
-  }, []);
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- hydrate from localStorage after mount to avoid SSR mismatch
+  useEffect(() => { setStats(loadStats()); }, []);
 
-  const isLastGame = result !== null && currentGame >= GAMES_PER_SESSION;
-
-  useEffect(() => {
-    if (isLastGame) {
-      if (difficulty > stats.bestDifficulty) {
-        setStats(() => {
-          const next = { bestDifficulty: difficulty };
-          saveStats(next);
-          return next;
-        });
-      }
-      sessionEndTimeoutRef.current = setTimeout(() => {
-        setShowSessionEnd(true);
-      }, 2000);
-    }
-  }, [isLastGame, difficulty, stats.bestDifficulty]);
-
-  const applyResult = useCallback((r: 'win' | 'loss' | 'draw') => {
+  const applyResult = useCallback((r: 'win' | 'loss' | 'draw', isLast: boolean) => {
     setDifficulty(prev => {
-      if (r === 'win') return prev + Math.min(25, (100 - prev) / 2);
-      if (r === 'loss') return prev - Math.min(25, prev / 2);
-      return prev;
+      let next = prev;
+      if (r === 'win') next = prev + Math.min(25, (100 - prev) / 2);
+      if (r === 'loss') next = prev - Math.min(25, prev / 2);
+
+      if (isLast) {
+        setStats(current => {
+          if (next > current.bestDifficulty) {
+            const updated = { bestDifficulty: next };
+            saveStats(updated);
+            return updated;
+          }
+          return current;
+        });
+        sessionEndTimeoutRef.current = setTimeout(() => {
+          setShowSessionEnd(true);
+        }, 2000);
+      }
+
+      return next;
     });
   }, []);
 
   const handleCpuMove = useCallback(
-    (currentBoard: Board) => {
+    (currentBoard: Board, isLast: boolean) => {
       setCpuThinking(true);
       const delay = 300 + Math.random() * 300;
 
@@ -93,10 +91,10 @@ export function useGame() {
         if (winner) {
           setWinInfo(winner);
           setResult('loss');
-          applyResult('loss');
+          applyResult('loss', isLast);
         } else if (isBoardFull(nextBoard)) {
           setResult('draw');
-          applyResult('draw');
+          applyResult('draw', isLast);
         } else {
           setIsPlayerTurn(true);
         }
@@ -109,6 +107,7 @@ export function useGame() {
     (index: number) => {
       if (!isPlayerTurn || result || board[index] || cpuThinking) return;
 
+      const isLast = currentGame >= GAMES_PER_SESSION;
       const nextBoard = [...board];
       nextBoard[index] = 'X';
       setBoard(nextBoard);
@@ -117,20 +116,20 @@ export function useGame() {
       if (winner) {
         setWinInfo(winner);
         setResult('win');
-        applyResult('win');
+        applyResult('win', isLast);
         return;
       }
 
       if (isBoardFull(nextBoard)) {
         setResult('draw');
-        applyResult('draw');
+        applyResult('draw', isLast);
         return;
       }
 
       setIsPlayerTurn(false);
-      handleCpuMove(nextBoard);
+      handleCpuMove(nextBoard, isLast);
     },
-    [board, isPlayerTurn, result, cpuThinking, handleCpuMove, applyResult],
+    [board, isPlayerTurn, result, cpuThinking, currentGame, handleCpuMove, applyResult],
   );
 
   const resetBoard = useCallback(() => {
