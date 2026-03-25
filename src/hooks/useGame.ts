@@ -15,14 +15,14 @@ import {
 import { getCpuMove } from '@/lib/cpu';
 
 const STORAGE_KEY = 'ttt-stats';
-const DEFAULT_STATS: PlayerStats = { difficulty: INITIAL_DIFFICULTY, streak: 0 };
+const DEFAULT_STATS: PlayerStats = { bestDifficulty: 0, streak: 0 };
 
 function loadStats(): PlayerStats {
   if (typeof window === 'undefined') return DEFAULT_STATS;
   try {
     const data = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '');
     return {
-      difficulty: Math.min(100, Math.max(0, Number(data.difficulty) || INITIAL_DIFFICULTY)),
+      bestDifficulty: Math.min(100, Math.max(0, Number(data.bestDifficulty) || 0)),
       streak: Math.max(0, Number(data.streak) || 0),
     };
   } catch {
@@ -42,6 +42,7 @@ export function useGame() {
   const [result, setResult] = useState<GameResult>(null);
   const [winInfo, setWinInfo] = useState<WinInfo | null>(null);
   const [cpuThinking, setCpuThinking] = useState(false);
+  const [difficulty, setDifficulty] = useState(INITIAL_DIFFICULTY);
   const [stats, setStats] = useState<PlayerStats>(DEFAULT_STATS);
   const [currentGame, setCurrentGame] = useState(1);
   const cpuTimeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
@@ -52,23 +53,30 @@ export function useGame() {
 
   const isSessionEnd = result !== null && currentGame >= GAMES_PER_SESSION;
 
+  useEffect(() => {
+    if (isSessionEnd && difficulty > stats.bestDifficulty) {
+      setStats(prev => {
+        const next = { ...prev, bestDifficulty: difficulty };
+        saveStats(next);
+        return next;
+      });
+    }
+  }, [isSessionEnd, difficulty, stats.bestDifficulty]);
+
   const applyResult = useCallback((r: 'win' | 'loss' | 'draw') => {
-    setStats(prev => {
-      let nextDifficulty = prev.difficulty;
-      let nextStreak = prev.streak;
-
-      if (r === 'win') {
-        nextDifficulty = prev.difficulty + (100 - prev.difficulty) / 2;
-        nextStreak = prev.streak + 1;
-      } else if (r === 'loss') {
-        nextDifficulty = prev.difficulty / 2;
-        nextStreak = 0;
-      }
-
-      const next = { difficulty: nextDifficulty, streak: nextStreak };
-      saveStats(next);
-      return next;
+    setDifficulty(prev => {
+      if (r === 'win') return prev + Math.min(25, (100 - prev) / 2);
+      if (r === 'loss') return prev - Math.min(25, prev / 2);
+      return prev;
     });
+
+    if (r !== 'draw') {
+      setStats(prev => {
+        const next = { ...prev, streak: r === 'win' ? prev.streak + 1 : 0 };
+        saveStats(next);
+        return next;
+      });
+    }
   }, []);
 
   const handleCpuMove = useCallback(
@@ -77,7 +85,7 @@ export function useGame() {
       const delay = 300 + Math.random() * 300;
 
       cpuTimeoutRef.current = setTimeout(() => {
-        const move = getCpuMove(currentBoard, stats.difficulty);
+        const move = getCpuMove(currentBoard, difficulty);
         const nextBoard = [...currentBoard];
         nextBoard[move] = 'O';
         setBoard(nextBoard);
@@ -96,7 +104,7 @@ export function useGame() {
         }
       }, delay);
     },
-    [stats.difficulty, applyResult],
+    [difficulty, applyResult],
   );
 
   const makeMove = useCallback(
@@ -144,6 +152,7 @@ export function useGame() {
   const newSession = useCallback(() => {
     resetBoard();
     setCurrentGame(1);
+    setDifficulty(INITIAL_DIFFICULTY);
   }, [resetBoard]);
 
   useEffect(() => {
@@ -158,7 +167,8 @@ export function useGame() {
     result,
     winInfo,
     cpuThinking,
-    difficulty: stats.difficulty,
+    difficulty,
+    bestDifficulty: stats.bestDifficulty,
     streak: stats.streak,
     currentGame,
     isSessionEnd,

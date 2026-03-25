@@ -9,12 +9,12 @@ export interface WinInfo {
 }
 
 export interface PlayerStats {
-  difficulty: number;
+  bestDifficulty: number;
   streak: number;
 }
 
 export const GAMES_PER_SESSION = 5;
-export const INITIAL_DIFFICULTY = 50;
+export const INITIAL_DIFFICULTY = 15;
 
 const DIFFICULTY_LABELS: [number, string][] = [
   [85, 'Master'],
