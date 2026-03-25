@@ -14,7 +14,9 @@ export function StreakBadge({ streak }: StreakBadgeProps) {
   return (
     <div
       className={`
-        flex items-center gap-1 text-sm font-semibold text-accent
+        flex items-center gap-1.5 px-3 py-1 rounded-full
+        bg-accent/10 border border-accent/20
+        text-sm font-bold text-accent
         ${isMilestone ? 'animate-pulse' : ''}
       `}
     >

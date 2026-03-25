@@ -45,7 +45,7 @@ export function GameStatus({
   }
 
   return (
-    <div className={`text-center text-lg font-semibold h-7 ${colorClass}`}>
+    <div className={`text-center text-lg font-bold uppercase tracking-wide h-7 ${colorClass}`}>
       {message}
     </div>
   );
