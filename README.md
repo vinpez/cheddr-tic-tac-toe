@@ -2,6 +2,8 @@
 
 A single-player Tic Tac Toe web app with adaptive AI difficulty and session-based progression.
 
+**[Play it live](https://tic-tac-fw2sq4k2w-vincents-projects-a4847269.vercel.app/)**
+
 ## Getting Started
 
 ```bash
